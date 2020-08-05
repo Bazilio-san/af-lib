@@ -1,0 +1,45 @@
+{
+    "name": "af-lib",
+    "version": "1.0.1",
+    "description": "A highly specialized function library",
+    "main": "index.js",
+    "scripts": {
+        "test": "mocha --require @babel/register 'test/**/**spec.es6'"
+    },
+    "author": "Viacheslav Makarov <npmjs@bazilio.ru>",
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Bazilio-san/af-lib.git"
+    },
+    "files": [
+        "lib/*.*",
+        "*.js",
+        "index.es6"
+    ],
+    "dependencies": {
+        "app-root-path": "^3.0.0",
+        "config": "^3.3.1",
+        "lodash": "^4.17.19",
+        "memory-cache": "^0.2.0",
+        "moment": "^2.27.0",
+        "moment-timezone": "^0.5.31",
+        "mssql": "^6.2.1",
+        "uuid": "^8.2.0",
+        "winston": "^3.3.3",
+        "winston-daily-rotate-file": "^4.5.0",
+        "xxhashjs": "^0.2.2"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.10.5",
+        "@babel/register": "^7.10.5",
+        "chai": "^4.2.0",
+        "eslint": "^7.5.0",
+        "eslint-config-airbnb-base": "^14.2.0",
+        "eslint-friendly-formatter": "^4.0.1",
+        "eslint-loader": "^4.0.2",
+        "eslint-plugin-import": "^2.22.0",
+        "eslint-plugin-vue": "^6.2.2",
+        "mocha": "^8.0.1"
+    }
+}
