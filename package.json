@@ -1,17 +1,17 @@
 {
     "name": "af-lib",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "A highly specialized function library",
     "main": "index.js",
     "scripts": {
         "test": "mocha --require @babel/register 'test/**/**spec.es6'"
     },
     "author": "Viacheslav Makarov <npmjs@bazilio.ru>",
-    "license": "ISC",
     "repository": {
         "type": "git",
         "url": "https://github.com/Bazilio-san/af-lib.git"
     },
+    "license": "ISC",
     "files": [
         "lib/*.*",
         "*.js",
