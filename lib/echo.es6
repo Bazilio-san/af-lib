@@ -205,7 +205,7 @@ class Echo {
         if (consoleFunction === 'dir') {
             console.dir(msg);
         } else {
-            console.log(`${color}${this.UnderlineOff}${prefix}${msg}${this.reset}`);
+            console.log(`${color}${this.UnderlineOff}${prefix}${color}${msg}${this.reset}`);
         }
         if (logger) {
             logger.info(`${prefix}${msg.replace(/\[\d+m/g, '')}`);
@@ -336,7 +336,7 @@ class Echo {
         if (consoleFunction === 'dir') {
             console.dir(msg);
         } else {
-            console.log(`${lb}${color}${this.UnderlineOff}${prefix}${cTitle}${this.UnderlineOff}${msg}${this.reset}`);
+            console.log(`${lb}${color}${this.UnderlineOff}${prefix}${color}${cTitle}${this.UnderlineOff}${color}${msg}${this.reset}`);
         }
         if (logger) {
             logger[this.strlevels[iLevel]](this.clrESC(`${prefix}${title}${prefix || title ? ': ' : ''}${msg}`));
