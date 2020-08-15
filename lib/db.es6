@@ -175,6 +175,7 @@ sql.getRecordSchema3 = async (connectionId, schemaAndTable, options = {}) => {
         schema,
         fields,
         insertFields,
+        insertFieldsList,
         updateFields,
         mergeIdentity,
         getMergeSQL (packet, prepareOoptions = {}) {
