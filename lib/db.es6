@@ -123,7 +123,7 @@ sql.getRecordSchema3 = async (connectionId, schemaAndTable, options = {}) => {
         omitFields,
         pickFields,
         fieldTypeCorrection,
-        mergeRules: { mergeIdentity = [], excludeFromInsert = [], noUpdateIfNull = false, correction: mergeCorrection } = {}
+        mergeRules: { mergeIdentity = [], excludeFromInsert = [], noUpdateIfNull = false, correction: mergeCorrection, withClause } = {}
     } = options;
     const cPool = await module.exports.db.getPoolConnection(connectionId, 'getRecordSchema');
     const request = new sql.Request(cPool);
@@ -176,6 +176,7 @@ sql.getRecordSchema3 = async (connectionId, schemaAndTable, options = {}) => {
         fields,
         insertFields,
         insertFieldsList,
+        withClause,
         updateFields,
         mergeIdentity,
         getMergeSQL (packet, prepareOoptions = {}) {
@@ -189,7 +190,7 @@ DECLARE @t TABLE ( act VARCHAR(20));
 DECLARE @total AS INTEGER;
 DECLARE @i AS INTEGER;
 DECLARE @u AS INTEGER;
-MERGE ${schemaAndTable} AS target
+MERGE ${schemaAndTable} ${withClause || ''} AS target
 USING
 (
     SELECT * FROM
