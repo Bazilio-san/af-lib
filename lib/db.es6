@@ -143,10 +143,10 @@ sql.getRecordSchema3 = async (connectionId, schemaAndTable, options = {}) => {
     schemaAssoc = Array.isArray(pickFields) ? _.pick(schemaAssoc, pickFields) : schemaAssoc;
     sql.correctRecordSchema(schemaAssoc, fieldTypeCorrection);
     const schema = _.map(schemaAssoc, (fo) => (fo)).sort((a, b) => {
-        if (a.index > b.index) return 1;
-        if (a.index < b.index) return -1;
-        return 0;
-    });
+            if (a.index > b.index) return 1;
+            if (a.index < b.index) return -1;
+            return 0;
+        });
     const fields = schema.map(({ name }) => (name));
     const fieldsList = fields.map((fName) => `[${fName}]`).join(', ');
 
@@ -184,7 +184,9 @@ sql.getRecordSchema3 = async (connectionId, schemaAndTable, options = {}) => {
             if (preparePacket) {
                 sql.prepareDataForSQL(packet, this.schema, addValues4NotNullableFields, addMissingFields, validate);
             }
-            const values = `(${packet.map((r) => (fields.map((fName) => (r[fName])).join(','))).join(`)\n,(`)})`;
+            const values = `(${packet.map((r) => (fields.map((fName) => (r[fName]))
+                .join(',')))
+                .join(`)\n,(`)})`;
             const mergeSQL = `
 DECLARE @t TABLE ( act VARCHAR(20));
 DECLARE @total AS INTEGER;
@@ -225,7 +227,9 @@ SELECT @total as total, @i as inserted, @u as updated;
             if (!Array.isArray(packet)) {
                 packet = [packet];
             }
-            const values = `(${packet.map((r) => (fields.map((fName) => (r[fName])).join(','))).join(`)\n,(`)})`;
+            const values = `(${packet.map((r) => (fields.map((fName) => (r[fName]))
+                .join(',')))
+                .join(`)\n,(`)})`;
             return `INSERT INTO ${schemaAndTable} (${insertFieldsList}) ${addOutputInserted ? ' OUTPUT inserted.* ' : ''} VALUES ${values}`;
         },
         getUpdateSQL (record) {
@@ -236,7 +240,8 @@ SELECT @total as total, @i as inserted, @u as updated;
                     setArray.push(`[${fName}] = ${recordForSQL[fName]}`);
                 }
             });
-            const where = `(${mergeIdentity.map((fName) => (`[${fName}] = ${recordForSQL[fName]}`)).join(' AND ')})`;
+            const where = `(${mergeIdentity.map((fName) => (`[${fName}] = ${recordForSQL[fName]}`))
+                .join(' AND ')})`;
             return `UPDATE ${schemaAndTable} SET ${setArray.join(', ')} WHERE ${where};`;
         }
     };
@@ -249,7 +254,8 @@ sql.binToHexString = (value) => {
     if (!value) {
         return null;
     }
-    return `0x${value.toString('hex').toUpperCase()}`;
+    return `0x${value.toString('hex')
+        .toUpperCase()}`;
 };
 
 /**
@@ -345,7 +351,8 @@ sql.getValueForSQL = (value, fieldSchema, validate = false, escapeOnlySingleQuot
             if (!value || typeof value !== 'string' || !/^[A-F\d]{8}(-[A-F\d]{4}){4}[A-F\d]{8}/i.test(value)) {
                 value = null;
             } else {
-                value = value.substr(0, 36).toUpperCase();
+                value = value.substr(0, 36)
+                    .toUpperCase();
             }
             return sql.s(value, nullable, 0, default_, noQuotes, escapeOnlySingleQuotes);
         case 'datetime':
@@ -364,7 +371,8 @@ sql.getValueForSQL = (value, fieldSchema, validate = false, escapeOnlySingleQuot
                 let offset = val._tzm;
                 if (!val._a) {
                     // Если moment не смог распарсить дату (типа (new Date()).toString()), то у него нет свойства _a. Используем костыль
-                    [, offset] = String(value).match(/GMT([+-]\d+)/) || [];
+                    [, offset] = String(value)
+                        .match(/GMT([+-]\d+)/) || [];
                 }
                 val.utcOffset(offset);
             }
@@ -372,10 +380,12 @@ sql.getValueForSQL = (value, fieldSchema, validate = false, escapeOnlySingleQuot
                 case 'datetime':
                 case sql.DateTime:
                 case sql.DateTime2:
-                    return q(val.format(`YYYY-MM-DDTHH:mm:ss.SSS0`).substr(0, 23), noQuotes);
+                    return q(val.format(`YYYY-MM-DDTHH:mm:ss.SSS0`)
+                        .substr(0, 23), noQuotes);
                 case 'time':
                 case sql.Time:
-                    return q(val.format('HH:mm:ss.SSS0').substr(0, 12), noQuotes);
+                    return q(val.format('HH:mm:ss.SSS0')
+                        .substr(0, 12), noQuotes);
                 case 'date':
                 case sql.Date:
                     return q(val.format('YYYY-MM-DD'), noQuotes);
@@ -388,6 +398,12 @@ sql.getValueForSQL = (value, fieldSchema, validate = false, escapeOnlySingleQuot
             val = inputDateFormat ? moment(value, inputDateFormat) : moment(value);
             if (!val.isValid()) {
                 return sql.s(null, nullable, 0, default_, noQuotes, escapeOnlySingleQuotes);
+            }
+            if (scale > 3 && typeof value === 'string') {
+                const [, micros] = /\.\d\d\d(\d+)[Z+]/.exec(value) || [];
+                if (micros) {
+                    return q(val.format(`YYYY-MM-DDTHH:mm:ss.SSS${micros}Z`), noQuotes);
+                }
             }
             return q(val.format(`YYYY-MM-DDTHH:mm:ss.${'S'.repeat(scale == null ? 3 : scale)}Z`), noQuotes);
         case 'boolean':
@@ -454,7 +470,8 @@ sql.serialize = (value, fieldSchema) => {
     if (typeof val === 'number') {
         return val;
     }
-    return String(val).replace(/(^')|('$)/g, '');
+    return String(val)
+        .replace(/(^')|('$)/g, '');
 };
 
 /**
@@ -679,7 +696,12 @@ const db = {
                 process.exit(0);
                 return;
             }
-            echo.mErr(err, { helpErr, lb, msg: errMsg, thr: onError === 'throw' });
+            echo.mErr(err, {
+                helpErr,
+                lb,
+                msg: errMsg,
+                thr: onError === 'throw'
+            });
         }
     },
 
