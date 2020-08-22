@@ -7,4 +7,4 @@ thumbs.db
 # DEV directories
 /_misc/
 /_tmp/
-/sync-bf.cmd
+/sync-bf*.*
