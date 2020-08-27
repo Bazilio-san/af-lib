@@ -36,7 +36,7 @@ class Logger {
         removeEmptyErrorFiles = false,
         removeEmptyLogFiles = false,
         logDir,
-        emiter
+        emitter
     ) {
         const options = typeof suffix === 'object' ? { ...suffix } : {
             suffix,
@@ -44,7 +44,7 @@ class Logger {
             removeEmptyLogFiles,
             logDir
         };
-        this.emiter = emiter;
+        this.emitter = emitter;
         const prefix = options.prefix == null ? 'sync-' : options.prefix;
         const errorPrefix = options.errorPrefix == null ? 'error-sync-' : options.errorPrefix;
         logDir = options.logDir;
@@ -160,8 +160,8 @@ class Logger {
     }
 
     onNew (oldFilename, newFilename, logType) {
-        if (this.emiter) {
-            this.emiter.emit(`logNew${logType}`, {
+        if (this.emitter) {
+            this.emitter.emit(`logNew${logType}`, {
                 oldFilename,
                 newFilename
             });
@@ -169,8 +169,8 @@ class Logger {
     }
 
     onRotate (oldFilename, newFilename, logType) {
-        if (this.emiter) {
-            this.emiter.emit(`logRotate${logType}`, {
+        if (this.emitter) {
+            this.emitter.emit(`logRotate${logType}`, {
                 oldFilename,
                 newFilename
             });
