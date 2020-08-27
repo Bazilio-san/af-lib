@@ -31,19 +31,20 @@ function removeEmptyLog (filename) {
 }
 
 class Logger {
-    constructor (suffix,
+    constructor (
+        suffix,
         removeEmptyErrorFiles = false,
         removeEmptyLogFiles = false,
-        logDir) {
-        //
-        //
+        logDir,
+        emiter
+    ) {
         const options = typeof suffix === 'object' ? { ...suffix } : {
             suffix,
             removeEmptyErrorFiles,
             removeEmptyLogFiles,
             logDir
         };
-
+        this.emiter = emiter;
         const prefix = options.prefix == null ? 'sync-' : options.prefix;
         const errorPrefix = options.errorPrefix == null ? 'error-sync-' : options.errorPrefix;
         logDir = options.logDir;
@@ -73,7 +74,8 @@ class Logger {
             maxSize: '20m'
             // maxFiles: '14d'
         });
-        transportError.on('rotate', removeEmptyLog);
+        transportError.on('rotate', this.onRotateErrorLog);
+        transportError.on('new', this.onNewErrorLog);
         this.errorLogger = createLogger({
             transports: [transportError],
             format: format.combine(
@@ -90,7 +92,8 @@ class Logger {
             datePattern: 'YYYY-MM-DD',
             'prepend': true
         });
-        transportSuccess.on('rotate', removeEmptyLog);
+        transportSuccess.on('rotate', this.onRotateSuccessLog);
+        transportError.on('new', this.onNewSuccessLog);
         this.successLogger = createLogger({
             transports: [transportSuccess],
             format: format.combine(
@@ -121,21 +124,23 @@ class Logger {
         this.removeOldEmptyFiles = (logger) => {
             const { dirname } = logger._readableState.pipes;
             try {
-                fs.readdirSync(dirname).forEach((fileName) => {
-                    const fullPath = path.join(dirname, fileName);
-                    const stat = fs.lstatSync(fullPath);
-                    const isFile = stat.isFile();
-                    if (!isFile || stat.size) {
-                        return;
-                    }
-                    const match = logger.re.exec(fileName);
-                    if (!match) {
-                        return;
-                    }
-                    if (match[1].replace(/-/g, '') < moment(new Date()).format('YYYYMMDD')) {
-                        fs.unlinkSync(fullPath);
-                    }
-                });
+                fs.readdirSync(dirname)
+                    .forEach((fileName) => {
+                        const fullPath = path.join(dirname, fileName);
+                        const stat = fs.lstatSync(fullPath);
+                        const isFile = stat.isFile();
+                        if (!isFile || stat.size) {
+                            return;
+                        }
+                        const match = logger.re.exec(fileName);
+                        if (!match) {
+                            return;
+                        }
+                        if (match[1].replace(/-/g, '') < moment(new Date())
+                            .format('YYYYMMDD')) {
+                            fs.unlinkSync(fullPath);
+                        }
+                    });
             } catch (err) {
                 console.log(err && err.message);
             }
@@ -152,6 +157,41 @@ class Logger {
         if (options.removeEmptyLogFiles) {
             this.removeOldEmptyLogFiles();
         }
+    }
+
+    onNew (oldFilename, newFilename, logType) {
+        if (this.emiter) {
+            this.emiter.emit(`logNew${logType}`, {
+                oldFilename,
+                newFilename
+            });
+        }
+    }
+
+    onRotate (oldFilename, newFilename, logType) {
+        if (this.emiter) {
+            this.emiter.emit(`logRotate${logType}`, {
+                oldFilename,
+                newFilename
+            });
+        }
+        removeEmptyLog(oldFilename);
+    }
+
+    onNewSuccessLog (oldFilename, newFilename) {
+        this.onNew(oldFilename, newFilename, 'Success');
+    }
+
+    onRotateSuccessLog (oldFilename, newFilename) {
+        this.onRotate(oldFilename, newFilename, 'Success');
+    }
+
+    onNewErrorLog (oldFilename, newFilename) {
+        this.onNew(oldFilename, newFilename, 'Error');
+    }
+
+    onRotateErrorLog (oldFilename, newFilename) {
+        this.onRotate(oldFilename, newFilename, 'Error');
     }
 }
 
