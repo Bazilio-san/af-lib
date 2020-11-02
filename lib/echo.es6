@@ -387,6 +387,50 @@ class Echo {
         this.echo(msg, Object.assign(options, { colorNum: this.Red }));
     }
 
+    SPA (socket, msgOrNotifyConfig, type, timeout) {
+        if (!msgOrNotifyConfig) {
+            return;
+        }
+        const self = this;
+        if (typeof msgOrNotifyConfig !== 'object') {
+            msgOrNotifyConfig = { message: msgOrNotifyConfig };
+        }
+        if (!msgOrNotifyConfig.message) {
+            return;
+        }
+        if (type) {
+            msgOrNotifyConfig.type = type;
+        }
+        if (timeout) {
+            msgOrNotifyConfig.timeout = timeout;
+        }
+        socket.emit('notifySPA', msgOrNotifyConfig);
+    }
+
+    SPAinfo (socket, msgOrNotifyConfig, timeout) {
+        if (msgOrNotifyConfig) {
+            this.SPA(socket, msgOrNotifyConfig, 'positive', timeout);
+        }
+    }
+
+    SPAerr (socket, msgOrNotifyConfig, timeout) {
+        if (msgOrNotifyConfig) {
+            this.SPA(socket, msgOrNotifyConfig, 'negative', timeout);
+        }
+    }
+
+    SPAwarn (socket, msgOrNotifyConfig, timeout) {
+        if (msgOrNotifyConfig) {
+            this.SPA(socket, msgOrNotifyConfig, 'warning', timeout);
+        }
+    }
+
+    SPAconsole (socket, msgOrNotifyConfig) {
+        if (msgOrNotifyConfig) {
+            this.SPA(socket, msgOrNotifyConfig, 'console');
+        }
+    }
+
     /**
      * Вывод сообщения в консоль и возврат курсора на указанное количество строк назад
      * Позволяет организовать "заменяемые сообщения" в консоли Unix
@@ -503,6 +547,7 @@ class Echo {
      * @param {Boolean} [nc] - "no console" - если true, то не выводить сообщение об ошибке в консоль
      * @param {Boolean} [thr] - "is throw error" - если true, ошибка будет выброшена снова
      * @param {Object} [errorLogger] - объект для логирования
+     * @param {Object} [socket]
      */
 
     /**
@@ -516,7 +561,7 @@ class Echo {
         if (!err || typeof err !== 'object') {
             err = {};
         }
-        const { lb = 0, nc, msg, thr, errorLogger, prefix, noStack = false } = options;
+        const { lb = 0, nc, msg, thr, errorLogger, prefix, noStack = false, socket } = options;
 
         let targetFrame;
 
@@ -596,6 +641,9 @@ class Echo {
         }
         if (errorLogger) {
             errorLogger.error(this.clrESC(`${prefix ? `${prefix}: ` : ''}${message4Logger || message}`));
+        }
+        if (socket) {
+            this.SPAerr(socket, message);
         }
         if (thr) {
             throw err;
