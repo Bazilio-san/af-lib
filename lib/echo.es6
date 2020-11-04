@@ -544,8 +544,8 @@ class Echo {
      * @param {Number} [lb] - "lines back" - на сколько строк вверх скорректировать точку возникновения ошибки в последней функции в стеке
      * @param {Error} [helpErr] - вспомогательный объект, несущий в callstack сведения о вызовах родительской функции
      * @param {String} [msg] - дополнительное сообщение
-     * @param {Boolean} [nc] - "no console" - если true, то не выводить сообщение об ошибке в консоль
-     * @param {Boolean} [thr] - "is throw error" - если true, ошибка будет выброшена снова
+     * @param {Boolean|Number} [nc] - "no console" - если true, то не выводить сообщение об ошибке в консоль
+     * @param {Boolean|Number} [thr] - "is throw error" - если true, ошибка будет выброшена снова
      * @param {Object} [errorLogger] - объект для логирования
      * @param {Object} [socket]
      */
@@ -560,7 +560,11 @@ class Echo {
         }
         if (!err || typeof err !== 'object') {
             err = {};
+        } else if (err.processed) {
+            return;
         }
+        err.processed = true;
+
         const { lb = 0, nc, msg, thr, errorLogger, prefix, noStack = false, socket } = options;
 
         let targetFrame;
