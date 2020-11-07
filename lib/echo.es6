@@ -235,6 +235,25 @@ class Echo {
     }
 
     /**
+     * Установка уровня логированя RunTime
+     * @param {String|Number} level
+     */
+    setILevel (level) {
+        if (typeof level === 'number') {
+            if (/^[012345]$/.test(String(level))) {
+                this.iLevel = level;
+            }
+            return;
+        }
+        if (typeof level === 'string') {
+            const iLevel = this.levels[level];
+            if (iLevel !== undefined) {
+                this.iLevel = level;
+            }
+        }
+    }
+
+    /**
      * Проверяет, возможен ли вывод сообщений с указанным уровнем
      * @param {String|Number} level
      * @param {String|Number} [compareLevel]
