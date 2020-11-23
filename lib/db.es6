@@ -346,6 +346,7 @@ sql.getValueForSQL = (value, fieldSchema, validate = false, escapeOnlySingleQuot
         case sql.Xml:
             return sql.s(value, nullable, length, default_, noQuotes, escapeOnlySingleQuotes);
         case 'uid':
+        case 'uuid':
         case 'uniqueIdentifier':
         case sql.UniqueIdentifier:
             if (!value || typeof value !== 'string' || !/^[A-F\d]{8}(-[A-F\d]{4}){4}[A-F\d]{8}/i.test(value)) {
