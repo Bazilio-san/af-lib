@@ -415,6 +415,7 @@ sql.getValueForSQL = (value, fieldSchema, validate = false, escapeOnlySingleQuot
             return value ? '1' : '0';
         case sql.TinyInt:
             return prepareNumber(0, 255);
+        case 'smallint':
         case sql.SmallInt:
             return prepareNumber(-32768, 32767);
         case 'int':
