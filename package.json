@@ -1,6 +1,6 @@
 {
     "name": "af-lib",
-    "version": "1.0.18",
+    "version": "1.0.23",
     "description": "A highly specialized function library",
     "main": "index.js",
     "scripts": {

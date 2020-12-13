@@ -579,10 +579,10 @@ class Echo {
         }
         if (!err || typeof err !== 'object') {
             err = {};
-        } else if (err.processed) {
+        } else if (err.aProcessed) {
             return;
         }
-        err.processed = true;
+        err.aProcessed = true;
 
         const { lb = 0, nc, msg, thr, errorLogger, prefix, noStack = false, socket } = options;
 

@@ -346,6 +346,7 @@ sql.getValueForSQL = (value, fieldSchema, validate = false, escapeOnlySingleQuot
         case sql.Xml:
             return sql.s(value, nullable, length, default_, noQuotes, escapeOnlySingleQuotes);
         case 'uid':
+        case 'uuid':
         case 'uniqueIdentifier':
         case sql.UniqueIdentifier:
             if (!value || typeof value !== 'string' || !/^[A-F\d]{8}(-[A-F\d]{4}){4}[A-F\d]{8}/i.test(value)) {
@@ -414,6 +415,7 @@ sql.getValueForSQL = (value, fieldSchema, validate = false, escapeOnlySingleQuot
             return value ? '1' : '0';
         case sql.TinyInt:
             return prepareNumber(0, 255);
+        case 'smallint':
         case sql.SmallInt:
             return prepareNumber(-32768, 32767);
         case 'int':
