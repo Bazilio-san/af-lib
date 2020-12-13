@@ -414,7 +414,7 @@ class Echo {
         if (typeof msgOrNotifyConfig !== 'object') {
             msgOrNotifyConfig = { message: msgOrNotifyConfig };
         }
-        if (!msgOrNotifyConfig.message) {
+        if (!msgOrNotifyConfig.message && !msgOrNotifyConfig.messageTid) {
             return;
         }
         if (type) {
