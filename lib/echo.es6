@@ -579,7 +579,7 @@ class Echo {
         }
         if (!err || typeof err !== 'object') {
             err = {};
-        } else if (err.aProcessed) {
+        } else if (err.aProcessed && !options.p) {
             return;
         }
         err.aProcessed = true;
