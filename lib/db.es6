@@ -14,6 +14,8 @@ const echo = require('./echo.es6');
 const timezone = config.get('timezone');
 moment.tz.setDefault(timezone);
 
+const { database: { dialect = 'mssql' } = {} } = config;
+const IS_POSTGRES = dialect === 'postgres';
 /**
  * Оборачивает строку в одинарные кавычки, если второй аргумент не true
  * @param {String} val
@@ -409,10 +411,17 @@ sql.getValueForSQL = (value, fieldSchema, validate = false, escapeOnlySingleQuot
             return q(val.format(`YYYY-MM-DDTHH:mm:ss.${'S'.repeat(scale == null ? 3 : scale)}Z`), noQuotes);
         case 'boolean':
         case sql.Bit:
-            if (typeof value === 'string') {
-                return /^(0|no|false|ложь)$/i.test(value) ? '0' : '1';
+            if(IS_POSTGRES){
+                if (typeof value === 'string') {
+                    return /^(0|no|false|ложь)$/i.test(value) ? 'false' : 'true';
+                }
+                return value ? 'true' : 'false';
+            } else {
+                if (typeof value === 'string') {
+                    return /^(0|no|false|ложь)$/i.test(value) ? '0' : '1';
+                }
+                return value ? '1' : '0';
             }
-            return value ? '1' : '0';
         case sql.TinyInt:
             return prepareNumber(0, 255);
         case 'smallint':
