@@ -125,7 +125,13 @@ sql.getRecordSchema3 = async (connectionId, schemaAndTable, options = {}) => {
         omitFields,
         pickFields,
         fieldTypeCorrection,
-        mergeRules: { mergeIdentity = [], excludeFromInsert = [], noUpdateIfNull = false, correction: mergeCorrection, withClause } = {}
+        mergeRules: {
+            mergeIdentity = [],
+            excludeFromInsert = [],
+            noUpdateIfNull = false,
+            correction: mergeCorrection,
+            withClause
+        } = {}
     } = options;
     const cPool = await module.exports.db.getPoolConnection(connectionId, 'getRecordSchema');
     const request = new sql.Request(cPool);
@@ -145,10 +151,10 @@ sql.getRecordSchema3 = async (connectionId, schemaAndTable, options = {}) => {
     schemaAssoc = Array.isArray(pickFields) ? _.pick(schemaAssoc, pickFields) : schemaAssoc;
     sql.correctRecordSchema(schemaAssoc, fieldTypeCorrection);
     const schema = _.map(schemaAssoc, (fo) => (fo)).sort((a, b) => {
-            if (a.index > b.index) return 1;
-            if (a.index < b.index) return -1;
-            return 0;
-        });
+        if (a.index > b.index) return 1;
+        if (a.index < b.index) return -1;
+        return 0;
+    });
     const fields = schema.map(({ name }) => (name));
     const fieldsList = fields.map((fName) => `[${fName}]`).join(', ');
 
@@ -182,7 +188,12 @@ sql.getRecordSchema3 = async (connectionId, schemaAndTable, options = {}) => {
         updateFields,
         mergeIdentity,
         getMergeSQL (packet, prepareOoptions = {}) {
-            const { preparePacket = false, addValues4NotNullableFields = false, addMissingFields = false, validate = false } = prepareOoptions;
+            const {
+                preparePacket = false,
+                addValues4NotNullableFields = false,
+                addMissingFields = false,
+                validate = false
+            } = prepareOoptions;
             if (preparePacket) {
                 sql.prepareDataForSQL(packet, this.schema, addValues4NotNullableFields, addMissingFields, validate);
             }
@@ -229,8 +240,7 @@ SELECT @total as total, @i as inserted, @u as updated;
             if (!Array.isArray(packet)) {
                 packet = [packet];
             }
-            const values = `(${packet.map((r) => (fields.map((fName) => (r[fName]))
-                .join(',')))
+            const values = `(${packet.map((r) => (insertFields.map((fName) => (r[fName] === undefined ? 'NULL' : r[fName])).join(',')))
                 .join(`)\n,(`)})`;
             return `INSERT INTO ${schemaAndTable} (${insertFieldsList}) ${addOutputInserted ? ' OUTPUT inserted.* ' : ''} VALUES ${values}`;
         },
@@ -411,17 +421,17 @@ sql.getValueForSQL = (value, fieldSchema, validate = false, escapeOnlySingleQuot
             return q(val.format(`YYYY-MM-DDTHH:mm:ss.${'S'.repeat(scale == null ? 3 : scale)}Z`), noQuotes);
         case 'boolean':
         case sql.Bit:
-            if(IS_POSTGRES){
+            if (IS_POSTGRES) {
                 if (typeof value === 'string') {
                     return /^(0|no|false|ложь)$/i.test(value) ? 'false' : 'true';
                 }
                 return value ? 'true' : 'false';
-            } else {
-                if (typeof value === 'string') {
-                    return /^(0|no|false|ложь)$/i.test(value) ? '0' : '1';
-                }
-                return value ? '1' : '0';
             }
+            if (typeof value === 'string') {
+                return /^(0|no|false|ложь)$/i.test(value) ? '0' : '1';
+            }
+            return value ? '1' : '0';
+
         case sql.TinyInt:
             return prepareNumber(0, 255);
         case 'smallint':
