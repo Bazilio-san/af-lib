@@ -150,26 +150,33 @@ sql.getRecordSchema3 = async (connectionId, schemaAndTable, options = {}) => {
     let schemaAssoc = Array.isArray(omitFields) ? _.omit(columns, omitFields) : columns;
     schemaAssoc = Array.isArray(pickFields) ? _.pick(schemaAssoc, pickFields) : schemaAssoc;
     sql.correctRecordSchema(schemaAssoc, fieldTypeCorrection);
-    const schema = _.map(schemaAssoc, (fo) => (fo)).sort((a, b) => {
-        if (a.index > b.index) return 1;
-        if (a.index < b.index) return -1;
-        return 0;
-    });
+    const schema = _.map(schemaAssoc, (fo) => (fo))
+        .sort((a, b) => {
+            if (a.index > b.index) return 1;
+            if (a.index < b.index) return -1;
+            return 0;
+        });
     const fields = schema.map(({ name }) => (name));
-    const fieldsList = fields.map((fName) => `[${fName}]`).join(', ');
+    const fieldsList = fields.map((fName) => `[${fName}]`)
+        .join(', ');
 
-    const onClause = `(${mergeIdentity.map((fName) => (`target.[${fName}] = source.[${fName}]`)).join(' AND ')})`;
+    const onClause = `(${mergeIdentity.map((fName) => (`target.[${fName}] = source.[${fName}]`))
+        .join(' AND ')})`;
     const insertFields = fields.filter((fName) => (!excludeFromInsert.includes(fName)));
-    const insertSourceList = insertFields.map((fName) => (`source.[${fName}]`)).join(', ');
-    const insertFieldsList = insertFields.map((fName) => `[${fName}]`).join(', ');
+    const insertSourceList = insertFields.map((fName) => (`source.[${fName}]`))
+        .join(', ');
+    const insertFieldsList = insertFields.map((fName) => `[${fName}]`)
+        .join(', ');
     const updateFields = fields.filter((fName) => (!mergeIdentity.includes(fName)));
     let updateFieldsList;
     if (noUpdateIfNull) {
         updateFieldsList = updateFields.map(
             (fName) => (`target.[${fName}] = COALESCE(source.[${fName}], target.[${fName}])`)
-        ).join(', ');
+        )
+            .join(', ');
     } else {
-        updateFieldsList = updateFields.map((fName) => (`target.[${fName}] = source.[${fName}]`)).join(', ');
+        updateFieldsList = updateFields.map((fName) => (`target.[${fName}] = source.[${fName}]`))
+            .join(', ');
     }
     const dbConfig = module.exports.db.getDbConfig(connectionId);
     const dbSchemaAndTable = `[${dbConfig.database}].${schemaAndTable}`;
@@ -240,7 +247,8 @@ SELECT @total as total, @i as inserted, @u as updated;
             if (!Array.isArray(packet)) {
                 packet = [packet];
             }
-            const values = `(${packet.map((r) => (insertFields.map((fName) => (r[fName] === undefined ? 'NULL' : r[fName])).join(',')))
+            const values = `(${packet.map((r) => (insertFields.map((fName) => (r[fName] === undefined ? 'NULL' : r[fName]))
+                .join(',')))
                 .join(`)\n,(`)})`;
             return `INSERT INTO ${schemaAndTable} (${insertFieldsList}) ${addOutputInserted ? ' OUTPUT inserted.* ' : ''} VALUES ${values}`;
         },
@@ -683,7 +691,10 @@ const db = {
      */
     getPoolConnection: async (connectionId, options = {}) => {
         const helpErr = new Error();
-        const { prefix = '', onError } = options; // onError = [exit|throw]
+        const {
+            prefix = '',
+            onError
+        } = options; // onError = [exit|throw]
         let lb = -4;
         try {
             let pool = pools[connectionId];
@@ -738,13 +749,21 @@ const db = {
             poolsToClose = [poolsToClose];
         }
         for (let i = 0; i < poolsToClose.length; i++) {
-            const pool = poolsToClose[i];
-            if (pool && pool.close) {
-                pool.close();
-                const connectionId = pool._connectionId;
+            let pool = poolsToClose[i];
+            let connectionId;
+            if (pool) {
+                if (typeof pool === 'string') {
+                    connectionId = pool;
+                    pool = pools[connectionId];
+                } else if (typeof pool === 'object') {
+                    connectionId = pool._connectionId;
+                }
                 if (connectionId) {
                     delete pools[connectionId];
-                    if (!noEcho) {
+                }
+                if (pool && pool.close) {
+                    pool.close();
+                    if (!noEcho && connectionId) {
                         const msg = `pool "${connectionId}" closed`;
                         if (prefix) {
                             echo.info(prefix, msg);
