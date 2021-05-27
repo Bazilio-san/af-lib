@@ -1,10 +1,10 @@
 {
     "name": "af-lib",
-    "version": "1.0.32",
+    "version": "2.0.1",
     "description": "A highly specialized function library",
     "main": "index.js",
     "scripts": {
-        "test": "mocha --require @babel/register 'test/**/**spec.es6'"
+        "test": "mocha --require @babel/register 'test/**/**spec.js'"
     },
     "author": "Viacheslav Makarov <npmjs@bazilio.ru>",
     "repository": {
@@ -15,20 +15,18 @@
     "files": [
         "lib/*.*",
         "*.js",
-        "index.es6"
+        "index.js"
     ],
     "dependencies": {
-        "app-root-path": "^3.0.0",
+        "af-echo": "^0.0.8",
+        "af-estimate": "^0.0.4",
+        "af-fns": "^0.0.3",
+        "af-logger": "^0.0.2",
         "config": "^3.3.6",
         "lodash": "^4.17.21",
         "memory-cache": "^0.2.0",
-        "moment": "^2.29.1",
         "moment-timezone": "^0.5.33",
-        "mssql": "^6.2.1",
-        "uuid": "^8.3.2",
-        "winston": "^3.3.3",
-        "winston-daily-rotate-file": "^4.5.5",
-        "xxhashjs": "^0.2.2"
+        "mssql": "^6.2.1"
     },
     "devDependencies": {
         "@babel/core": "^7.14.3",

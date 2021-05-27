@@ -1,10 +1,7 @@
-'use strict';
-
 /* eslint-disable no-console */
 process.env.NODE_ENV = 'testing';
 
-const echo = require('../../lib/echo.es6');
-const { db } = require('../../lib/db.es6');
+const echo = require('af-echo');
 
 function a () {
     const o = {};
@@ -26,7 +23,6 @@ function test1 () {
         echo.mErr(err, { lb: 2, msg: 'TEST #1: === Должны быть правильные ссылки на вызовы ===' });
     }
 }
-
 
 // ############################################################
 
@@ -61,22 +57,7 @@ async function test2 () {
 
 // ############################################################
 
-async function test3 () {
-    await db.getPoolConnection('db_in_config');
-}
-
-// ############################################################
-
-
-async function test4 () {
-    await db.getPoolConnection('db_NOT_in_config', '', true);
-}
-
-
-// ############################################################
-
-
-function test5 () {
+function test3 () {
     const x = 1;
     const y = 1;
     // line
@@ -95,8 +76,4 @@ function test5 () {
     await test2();
     console.log('\n');
     await test3();
-    console.log('\n');
-    await test4();
-    console.log('\n');
-    await test5();
 }());

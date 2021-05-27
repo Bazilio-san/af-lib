@@ -1,7 +1,5 @@
-'use strict';
-
 const { expect } = require('chai');
-const { sql } = require('../../lib/db.es6');
+const { sql } = require('../../lib/db');
 
 describe('sql.endOfDate() should work properly', () => {
     const testArr = [

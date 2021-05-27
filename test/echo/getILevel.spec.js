@@ -1,8 +1,5 @@
-'use strict';
-
 const { expect } = require('chai');
-const echo = require('../../lib/echo.es6');
-
+const echo = require('af-echo');
 
 describe('echo.getILevel() should work properly', () => {
     describe('should properly recognize string levels', () => {

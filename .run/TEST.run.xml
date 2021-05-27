@@ -9,7 +9,7 @@
       <env name="NODE_ENV" value="testing" />
     </envs>
     <ui>bdd</ui>
-    <extra-mocha-options>--require @babel/register 'test/**/**spec.es6'</extra-mocha-options>
+    <extra-mocha-options>--require @babel/register 'test/**/**spec.js'</extra-mocha-options>
     <test-kind>PATTERN</test-kind>
     <test-pattern />
     <method v="2" />

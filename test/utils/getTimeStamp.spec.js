@@ -1,7 +1,5 @@
-'use strict';
-
 const { expect } = require('chai');
-const U = require('../../lib/utils.es6');
+const U = require('af-fns');
 
 describe('utils.getTimeStamp() should work properly', () => {
     it('without any options', () => {

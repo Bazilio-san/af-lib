@@ -1,19 +1,12 @@
-'use strict';
-
-// const config = require('config');
 const { expect } = require('chai');
-const echo = require('../../lib/echo.es6');
-
-
-// const currentLevel = config.get('logger.level');
-// const { defaultLevel } = echo;
+const echo = require('af-echo');
 
 function s (str) {
     return `${typeof str === 'string' ? `"${str}"` : `${str}`}`;
 }
 
 describe('echo.isLevelAllowed() should work properly', () => {
-    describe('compare to current level', () => {
+    describe(`isLevelAllowed (current = ${echo.level})`, () => {
         const testArr = [
             ['error', true],
             ['warn', true],
@@ -29,20 +22,20 @@ describe('echo.isLevelAllowed() should work properly', () => {
             [3, true],
             [4, false],
             ['4', false],
-            ['', false],
-            ['-2', false],
-            [-2, false],
-            [8, false],
-            ['foo', false]
+            ['', true],
+            ['-2', true],
+            [-2, true],
+            [8, true],
+            ['foo', true]
         ];
         testArr.forEach(([testLevel, bExprcted]) => {
-            it(`${s(testLevel)}`, () => {
+            it(`${s(testLevel)} -> ${echo.level} - ${bExprcted}`, () => {
                 const bResult = echo.isLevelAllowed(testLevel);
                 expect(bResult).to.equal(bExprcted);
             });
         });
     });
-    describe('compare to castom level', () => {
+    describe('isLevelAllowed', () => {
         const testArr = [
             ['error', 'warn', true],
             ['warn', 'error', false],
@@ -56,7 +49,7 @@ describe('echo.isLevelAllowed() should work properly', () => {
         ];
         testArr.forEach(([testLevel, compareLevel, bExprcted]) => {
             const bResult = echo.isLevelAllowed(testLevel, compareLevel);
-            it(`${s(testLevel)} to ${s(compareLevel)} - ${bResult}`, () => {
+            it(`${s(testLevel)} -> ${s(compareLevel)} - ${bResult}`, () => {
                 expect(bResult).to.equal(bExprcted);
             });
         });

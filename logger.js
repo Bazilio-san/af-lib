@@ -1,3 +1,1 @@
-'use strict';
-
-module.exports = require('./lib/Logger.es6');
+module.exports = require('af-logger');

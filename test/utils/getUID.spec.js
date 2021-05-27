@@ -1,8 +1,6 @@
-'use strict';
-
 const { expect } = require('chai');
-const moment = require('moment');
-const U = require('../../lib/utils.es6');
+const moment = require('moment-timezone');
+const U = require('af-fns');
 
 describe('utils.getUID() should work properly', () => {
     it('valid uid', () => {

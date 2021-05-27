@@ -341,6 +341,38 @@ adal-node@^0.1.28:
     xmldom ">= 0.1.x"
     xpath.js "~1.1.0"
 
+af-echo@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/af-echo/-/af-echo-0.0.8.tgz#766f90bb3af72af754f8afd11a30a0b7683c1842"
+  integrity sha512-g/9HAhK8BU9DuNqU5NOPDTdqL7mGi1kic/AzaI2qPsVmdMXgbNY831RWjp9RSttcPzUNo4v32HLLS9iQh6TTeQ==
+
+af-estimate@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/af-estimate/-/af-estimate-0.0.4.tgz#42f926f1df02e6cd3321dbbff6aca26e40603828"
+  integrity sha512-tP1YUv7F00I/KM7bW69x57DdR7gP6CGENt3tUC7414sbay1Oi3FoudEKl+vGLVA0jlYuAvefbDldiWSv7Jzyug==
+  dependencies:
+    af-echo "^0.0.8"
+    af-fns "^0.0.3"
+
+af-fns@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/af-fns/-/af-fns-0.0.3.tgz#8c74cc88078df684eb134839516b49577160a779"
+  integrity sha512-jMkdyunI+qISDZoiu1cal3/LJTyOkUviMjul6S6lbG+XCbZoS6FuCAsCZetrMlMxDymFDmLEN7BRxriyZPNkxw==
+  dependencies:
+    moment "^2.29.1"
+    uuid "^8.3.2"
+    xxhashjs "^0.2.2"
+
+af-logger@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/af-logger/-/af-logger-0.0.2.tgz#a879e7cd6b7f7c26d3f1326884d3fe98c88527e6"
+  integrity sha512-Ft4+bt0tKJGCBLvqsTOMH+Ck7kn506lhS7mA3O0Kge5j6kBqovwgRBcuU/eDYBCK4szNwS8eiABcC0EgP2FYvA==
+  dependencies:
+    app-root-path "^3.0.0"
+    moment-timezone "^0.5.33"
+    winston "^3.3.3"
+    winston-daily-rotate-file "^4.5.5"
+
 ajv-keywords@^3.5.2:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-3.5.2.tgz#31f29da5ab6e00d1c2d329acf7b5929614d5014d"

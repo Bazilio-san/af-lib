@@ -1,5 +1,3 @@
-'use strict';
-
 const config = {
     timezone: 'Europe/Moscow',
     // timezone: 'America/Toronto',

@@ -1,5 +1,3 @@
-'use strict';
-
 /* eslint-disable max-len */
 /* eslint-disable no-console */
 
@@ -7,9 +5,8 @@
 // "Europe/Berlin"    +01:00
 // "Europe/Moscow"    +03:00
 
-
 const { expect } = require('chai');
-const { sql } = require('../../lib/db.es6');
+const { sql } = require('../../lib/db');
 
 describe('sql.getValueForSQL() should work properly', () => {
     before((next) => {
