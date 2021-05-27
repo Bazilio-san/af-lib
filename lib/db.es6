@@ -1,3 +1,5 @@
+// noinspection SqlResolve
+
 'use strict';
 
 /* eslint-disable max-len */
@@ -201,7 +203,7 @@ sql.getRecordSchema3 = async (connectionId, schemaAndTable, options = {}) => {
                 .join(',')))
                 .join(`)\n,(`)})`;
             const mergeSQL = `
-DECLARE @t TABLE ( act VARCHAR(20));
+${'DECLARE'} @t TABLE ( act VARCHAR(20));
 DECLARE @total AS INTEGER;
 DECLARE @i AS INTEGER;
 DECLARE @u AS INTEGER;
@@ -314,6 +316,7 @@ sql.getValueForSQL = (value, fieldSchema, validate = false, escapeOnlySingleQuot
     }
     const {
         type,
+        arrayType,
         length = 0,
         scale,
         nullable = true,
@@ -327,14 +330,14 @@ sql.getValueForSQL = (value, fieldSchema, validate = false, escapeOnlySingleQuot
 
     escapeOnlySingleQuotes = escapeOnlySingleQuotes || eosq;
 
-    function prepareNumber (min, max) {
-        if (value === 'null' || value == null || Number.isNaN(value)) {
+    function prepareNumber (min, max, value_ = value) {
+        if (value_ === 'null' || value_ == null || Number.isNaN(value_)) {
             if (nullable) {
                 return 'NULL';
             }
             return (default_ || default_ === 0) ? `${default_}` : null;
         }
-        val = Number(value);
+        val = Number(value_);
         if (validate && (val < min || val > max)) {
             // throwValidateError()
             throw new Error(`Type [${type}] validate error. Value: ${val} / FName: ${name}`);
@@ -472,6 +475,27 @@ sql.getValueForSQL = (value, fieldSchema, validate = false, escapeOnlySingleQuot
         case sql.Geometry:
         case sql.Variant:
             return sql.s(value, nullable, length, default_, noQuotes, escapeOnlySingleQuotes);
+        case 'array':
+            let arr = [];
+            if (Array.isArray(value) && value.length) {
+                switch (subType) {
+                    case 'int':
+                    case 'integer':
+                        arr = value.map((v) => prepareNumber(-2147483648, 2147483647, v));
+                        break;
+                    // case 'string':
+                    default:
+                        arr = value.map((v) => sql.s(v, nullable, length, undefined, true, false))
+                            .filter((v) => !!v)
+                            .map((v) => `"${v}"`);
+                        break;
+
+                }
+            }
+            if (arr.length) {
+                return `{${arr.join(',')}`;
+            }
+            return '{}';
         default:
             return sql.s(value, nullable, length, default_, noQuotes, escapeOnlySingleQuotes);
     }
