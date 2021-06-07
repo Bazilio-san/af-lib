@@ -1,6 +1,6 @@
 {
     "name": "af-lib",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "A highly specialized function library",
     "main": "index.js",
     "scripts": {
@@ -18,7 +18,7 @@
         "index.js"
     ],
     "dependencies": {
-        "af-echo": "^0.0.8",
+        "af-echo": "^0.0.9",
         "af-estimate": "^0.0.4",
         "af-fns": "^0.0.3",
         "af-logger": "^0.0.2",
